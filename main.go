@@ -2,28 +2,26 @@ package main
 
 import (
 	"bifrost-di/bifrost"
+	"bifrost-di/config"
 	"bifrost-di/example"
 	"fmt"
 )
 
+func NewCar() example.Car {
+	return example.Car{}
+}
+
+func NewEngine() example.Engine {
+	return example.Engine{}
+}
+
+func NewBody() example.Body {
+	return example.Body{}
+}
+
 func main() {
 
 	// manual dependency
-
-	car := example.Car{
-		example.Engine{
-			example.Gas{
-				example.Pertalite{
-					Brand:  "Shell",
-					Liters: 20,
-				},
-			},
-			example.Oil{},
-		},
-		example.Body{},
-	}
-
-	fmt.Println(car.Get())
 
 	// =================================================== //
 	//						Prototype					   //
@@ -34,15 +32,6 @@ func main() {
 
 	rootBf := bifrost.Bifrost{}
 
-	rootBf.OverrideGlobal(&example.Pertalite{
-		Brand:  "Endurance",
-		Liters: 10,
-	})
-
-	rootBf.Get(example.Car{})
-
-	fmt.Println()
-
-	rootBf.Get(example.Engine{})
+	rootBf.Gen(example.Car{}, config.Config2)
 
 }
