@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"reflect"
 	"strings"
+
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 type Deps struct {
@@ -38,6 +40,11 @@ func (sr *Sherlock) Gen() error {
 	wireFile3 := ""
 
 	for rootDepsName, deps := range sr.Dependencies {
+
+		t := table.NewWriter()
+		t.AppendHeader(table.Row{"PKG", "Name", "Type", "Is Overrider"})
+		t.SetTitle(rootDepsName)
+
 		wireBuild := ""
 		ovveriderParam := []string{}
 
@@ -49,14 +56,19 @@ func (sr *Sherlock) Gen() error {
 			wireBuild += fmt.Sprintf(`wire.Struct(new(%s), "*"),
 			`, d.Type)
 
+			t.AppendRow(table.Row{d.PkgPath, d.StructName, d.Type, false})
+
 		}
 
 		for _, d := range sr.overriders[rootDepsName] {
 			ovveriderParam = append(ovveriderParam, fmt.Sprintf(`%s %s`, strings.ToLower(d.StructName), d.Type))
+			t.AppendRow(table.Row{d.PkgPath, d.StructName, d.Type, true})
+
 		}
 
 		wireFile3 += fmt.Sprintf(initializerTemplate, rootDepsName, strings.Join(ovveriderParam, ","), deps[0].Type, wireBuild, deps[0].Type)
 
+		fmt.Println(t.Render())
 	}
 
 	os.WriteFile("wire.go", []byte(wireFile1+imports+wireFile2+wireFile3), os.ModePerm)
