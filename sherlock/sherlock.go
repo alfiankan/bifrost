@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -20,6 +21,8 @@ type Sherlock struct {
 	overriders      map[string][]Deps
 	Dependencies    map[string][]Deps
 	tempDependecies []Deps
+	path            string
+	pkgName         string
 }
 
 func New() *Sherlock {
@@ -30,14 +33,26 @@ func New() *Sherlock {
 	}
 }
 
+func (sr *Sherlock) SetPath(path string) {
+	sr.path = path
+}
+
+func (sr *Sherlock) SetPkgName(name string) {
+	sr.pkgName = name
+}
+
 func (sr *Sherlock) Gen() error {
 
 	fmt.Println("GENERATING WIRE FILE")
 
-	wireFile1 := wireHead
+	wireFile1 := fmt.Sprintf(wireHead, "main")
 	wireFile2 := wireInit
 	imports := ""
 	wireFile3 := ""
+
+	if sr.pkgName != "" {
+		wireFile1 = fmt.Sprintf(wireHead, sr.pkgName)
+	}
 
 	for rootDepsName, deps := range sr.Dependencies {
 
@@ -71,13 +86,18 @@ func (sr *Sherlock) Gen() error {
 		fmt.Println(t.Render())
 	}
 
-	os.WriteFile("wire.go", []byte(wireFile1+imports+wireFile2+wireFile3), os.ModePerm)
+	wireFileName := filepath.Join("wire.go")
+	if sr.path != "" {
+		wireFileName = filepath.Join(sr.path, "wire.go")
+	}
 
-	_, err := exec.Command("go", "fmt", "wire.go").Output()
+	os.WriteFile(wireFileName, []byte(wireFile1+imports+wireFile2+wireFile3), os.ModePerm)
+
+	_, err := exec.Command("go", "fmt", wireFileName).Output()
 	if err != nil {
 		fmt.Println("Formating error make sure gofmt installed", err.Error())
 	}
-	_, err = exec.Command("wire").Output()
+	_, err = exec.Command("wire", sr.path).Output()
 	if err != nil {
 		fmt.Println("Wiring error make sure google wire installed", err.Error())
 	}

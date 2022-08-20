@@ -5,7 +5,7 @@ const (
 //go:build wireinject
 // +build wireinject
 
-package main
+package %s
 
 import (
 	"github.com/google/wire"

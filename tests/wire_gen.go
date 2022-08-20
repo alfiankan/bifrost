@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package main
+package tests
 
 import (
 	"bifrost-di/example"
@@ -39,6 +39,11 @@ func InitializeEngine(pertalite example.Pertalite) example.Engine {
 		Oil: oil,
 	}
 	return engine
+}
+
+func InitializeBody() example.Body {
+	body := example.Body{}
+	return body
 }
 
 // wire.go:
