@@ -8,17 +8,18 @@ package main
 
 import (
 	"bifrost-di/example"
+	"fmt"
 )
 
 // Injectors from wire.go:
 
-func InitializeCar(gas example.Pertalite, body example.Body) example.Car {
-	exampleGas := example.Gas{
-		GasOil: gas,
+func InitializeCar(pertalite example.Pertalite, body example.Body) example.Car {
+	gas := example.Gas{
+		GasOil: pertalite,
 	}
 	oil := example.Oil{}
 	engine := example.Engine{
-		Gas: exampleGas,
+		Gas: gas,
 		Oil: oil,
 	}
 	car := example.Car{
@@ -26,4 +27,22 @@ func InitializeCar(gas example.Pertalite, body example.Body) example.Car {
 		Body:   body,
 	}
 	return car
+}
+
+func InitializeEngine(pertalite example.Pertalite) example.Engine {
+	gas := example.Gas{
+		GasOil: pertalite,
+	}
+	oil := example.Oil{}
+	engine := example.Engine{
+		Gas: gas,
+		Oil: oil,
+	}
+	return engine
+}
+
+// wire.go:
+
+func init() {
+	fmt.Println("Initializer")
 }

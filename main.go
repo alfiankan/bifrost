@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bifrost-di/bifrost"
 	"bifrost-di/config"
 	"bifrost-di/example"
-	"fmt"
+	"bifrost-di/sherlock"
+	"os"
 )
 
 func NewCar() example.Car {
@@ -19,19 +19,17 @@ func NewBody() example.Body {
 	return example.Body{}
 }
 
+var bodd = example.Body{}
+
 func main() {
 
-	// manual dependency
+	sr := sherlock.New()
 
-	// =================================================== //
-	//						Prototype					   //
-	// =================================================== //
-	fmt.Println()
-	fmt.Println("========================================")
-	fmt.Println()
+	sr.Add(example.Car{}, config.Config2, bodd)
+	sr.Add(example.Engine{}, config.Config2)
 
-	rootBf := bifrost.Bifrost{}
-
-	rootBf.Gen(example.Car{}, config.Config2)
+	if len(os.Args) > 1 && os.Args[1] == "sr-gen" {
+		sr.Gen()
+	}
 
 }
