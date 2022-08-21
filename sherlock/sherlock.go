@@ -20,6 +20,7 @@ type Deps struct {
 type Sherlock struct {
 	overriders      map[string][]Deps
 	Dependencies    map[string][]Deps
+	GlobalOveriders []Deps
 	tempDependecies []Deps
 	path            string
 	pkgName         string
@@ -30,15 +31,45 @@ func New() *Sherlock {
 		overriders:      map[string][]Deps{},
 		Dependencies:    map[string][]Deps{},
 		tempDependecies: []Deps{},
+		GlobalOveriders: []Deps{},
 	}
 }
 
-func (sr *Sherlock) SetPath(path string) {
+func (sr *Sherlock) SetPath(path string) *Sherlock {
 	sr.path = path
+	return sr
 }
 
-func (sr *Sherlock) SetPkgName(name string) {
+func (sr *Sherlock) SetPkgName(name string) *Sherlock {
 	sr.pkgName = name
+	return sr
+}
+
+func (sr *Sherlock) SetGlobalInject(obj any) *Sherlock {
+	if reflect.TypeOf(obj).String() == "string" {
+		fmt.Println("PRIMITIVE")
+	} else {
+		el := reflect.TypeOf(obj)
+
+		for rootName, deps := range sr.Dependencies {
+			sr.overriders[rootName] = append(sr.overriders[rootName], Deps{
+				PkgPath:    el.PkgPath(),
+				StructName: el.Name(),
+				Type:       el.String(),
+			})
+
+			filteredDependecies := []Deps{}
+
+			for _, d := range deps {
+				if !IsOverrided(d.Type, sr.overriders[rootName]) {
+					filteredDependecies = append(filteredDependecies, d)
+				}
+			}
+			sr.Dependencies[rootName] = filteredDependecies
+		}
+
+	}
+	return sr
 }
 
 func (sr *Sherlock) Gen() error {
@@ -104,7 +135,7 @@ func (sr *Sherlock) Gen() error {
 	return nil
 }
 
-func (sr *Sherlock) Add(obj any, ovr ...any) {
+func (sr *Sherlock) Add(obj any, ovr ...any) *Sherlock {
 
 	ParseDependecies(&sr.tempDependecies, obj)
 
@@ -136,4 +167,5 @@ func (sr *Sherlock) Add(obj any, ovr ...any) {
 
 	sr.tempDependecies = []Deps{}
 
+	return sr
 }

@@ -1,9 +1,8 @@
-module sherlock
+module github.com/alfiankan/sherlock-struct-autowire
 
 go 1.18
 
 require (
-	github.com/KyleBanks/depth v1.2.1
 	github.com/google/wire v0.5.0
 	github.com/jedib0t/go-pretty/v6 v6.3.6
 )

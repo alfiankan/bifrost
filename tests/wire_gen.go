@@ -7,8 +7,8 @@
 package tests
 
 import (
-	"bifrost-di/example"
 	"fmt"
+	"github.com/alfiankan/sherlock-struct-autowire/example"
 )
 
 // Injectors from wire.go:
@@ -29,7 +29,10 @@ func InitializeCar(pertalite example.Pertalite, body example.Body) example.Car {
 	return car
 }
 
-func InitializeEngine(pertalite example.Pertalite) example.Engine {
+func InitializeEngine(int64_2 int64) example.Engine {
+	pertalite := example.Pertalite{
+		Barrel: int64_2,
+	}
 	gas := example.Gas{
 		GasOil: pertalite,
 	}

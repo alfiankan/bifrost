@@ -4,8 +4,8 @@
 package tests
 
 import (
-	"bifrost-di/example"
 	"fmt"
+	"github.com/alfiankan/sherlock-struct-autowire/example"
 	"github.com/google/wire"
 )
 
@@ -23,10 +23,11 @@ func InitializeCar(pertalite example.Pertalite, body example.Body) example.Car {
 	return example.Car{}
 }
 
-func InitializeEngine(pertalite example.Pertalite) example.Engine {
+func InitializeEngine(int64 int64) example.Engine {
 	wire.Build(
 		wire.Struct(new(example.Engine), "*"),
 		wire.Struct(new(example.Gas), "*"),
+		wire.Struct(new(example.Pertalite), "*"),
 		wire.Struct(new(example.Oil), "*"),
 	)
 	return example.Engine{}
