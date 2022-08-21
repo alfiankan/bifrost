@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+// ParseDependecies walk to struct field and find dependencies resursively
+// slice of deps must be pointer, object is variadic
 func ParseDependecies(tempDeps *[]Deps, obj ...any) {
 
 	for _, objv := range obj {
@@ -58,6 +60,7 @@ func ParseDependecies(tempDeps *[]Deps, obj ...any) {
 	}
 }
 
+// IsOverrided Check If actual deps overriden
 func IsOverrided(depsType string, overriders []Deps) bool {
 	for _, d := range overriders {
 		if d.Type == depsType {
@@ -67,6 +70,7 @@ func IsOverrided(depsType string, overriders []Deps) bool {
 	return false
 }
 
+// IsPrimitive Check if deps are primitives
 func IsPrimitive(srcType string) bool {
 	primitives := []string{
 		"complex64",

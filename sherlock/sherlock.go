@@ -11,12 +11,14 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
+// Deps deps contains pkg path, struct name and type (package.structname)
 type Deps struct {
 	PkgPath    string
 	StructName string
 	Type       string
 }
 
+// Sherlock contains Dependencies maps and overriders map
 type Sherlock struct {
 	overriders      map[string][]Deps
 	Dependencies    map[string][]Deps
@@ -26,6 +28,7 @@ type Sherlock struct {
 	pkgName         string
 }
 
+// New instance new sherlock
 func New() *Sherlock {
 	return &Sherlock{
 		overriders:      map[string][]Deps{},
@@ -35,16 +38,19 @@ func New() *Sherlock {
 	}
 }
 
+// SetPath set save location for wire.go file adn wire gen output location path
 func (sr *Sherlock) SetPath(path string) *Sherlock {
 	sr.path = path
 	return sr
 }
 
+// SetPkgName set pkg name for generated wire
 func (sr *Sherlock) SetPkgName(name string) *Sherlock {
 	sr.pkgName = name
 	return sr
 }
 
+// SetGlobalInject inject or override globaly
 func (sr *Sherlock) SetGlobalInject(obj any) *Sherlock {
 	if reflect.TypeOf(obj).String() == "string" {
 		fmt.Println("PRIMITIVE")
@@ -72,6 +78,7 @@ func (sr *Sherlock) SetGlobalInject(obj any) *Sherlock {
 	return sr
 }
 
+// Gen generate wire.go file
 func (sr *Sherlock) Gen() error {
 
 	fmt.Println("GENERATING WIRE FILE")
@@ -135,6 +142,7 @@ func (sr *Sherlock) Gen() error {
 	return nil
 }
 
+// Add add new root deps for auto wiring
 func (sr *Sherlock) Add(obj any, ovr ...any) *Sherlock {
 
 	ParseDependecies(&sr.tempDependecies, obj)
