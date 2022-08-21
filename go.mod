@@ -1,4 +1,4 @@
-module bifrost-di
+module sherlock
 
 go 1.18
 
